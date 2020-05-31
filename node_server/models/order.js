@@ -21,10 +21,13 @@ const OrderSchema = mongoose.Schema({
                     }
                 }
             },
-            category:String  
+            category: String
         }
     ],
-    totalPrice: Number,
+    totalPrice: {
+        type: Number,
+        default: 0
+    },
     deliveryTime: String,
     status: {
         type: String,
@@ -40,6 +43,17 @@ const OrderSchema = mongoose.Schema({
         }
     }
 });
+OrderSchema.pre('save', async function (next) {
+    try {
 
-const Order = mongoose.model("orders",OrderSchema)
+        this.items.forEach(item => {
+            this.totalPrice += (item.price * item.quantity)
+        });
+
+        next();
+    } catch (err) {
+        next(err)
+    }
+})
+const Order = mongoose.model("orders", OrderSchema)
 module.exports = Order

@@ -13,8 +13,9 @@ const retrieveOrders = async (req, res) => {
                 .find({ status: req.query.status })
                 .limit(limit)
                 .skip(page * limit);
+         const pages = Math.ceil(total/25);       
             return res.status(200).json({
-                shelf, total
+                shelf, pages,total
             })
         }
         res.status(200).json();
